@@ -17,7 +17,10 @@
 ```mermaid
 classDiagram
     class Usuario {
-        +String username
+        +String nombre
+        +String apellido
+        +String email
+        +String cuil
         +String clave
         +RolUsuario rol
         +EstadoUsuario estado
@@ -29,11 +32,15 @@ classDiagram
     }
     class Cliente {
         +String nombre
+        +String cuit
+        +String direccion
         +EstadoCliente estado
     }
     class Tarea {
         +String descripcion
         +EstadoTarea estado
+        +Date fechaCreacion
+        +Date fechaActualizacion
     }
     class Contacto {
         +TipoContacto tipo
@@ -85,6 +92,7 @@ classDiagram
     Cliente "1" *-- "0..*" Contacto : posee
     Usuario "1" --> "0..*" AsignacionProyecto : participa
     Proyecto "1" --> "0..*" AsignacionProyecto : agrupa
+    Usuario "0..1" --> "0..*" Tarea : es responsable de
     Usuario ..> RolUsuario : usa
     Usuario ..> EstadoUsuario : usa
     Proyecto ..> EstadoProyecto : usa
@@ -117,3 +125,6 @@ classDiagram
 - `Proyecto` tiene `fechaLimite` opcional. Se considera retrasado si la fecha límite es anterior a la fecha actual y el estado no es Finalizado (R08).
 - `Contacto` es una entidad dependiente de `Cliente`, puede ser de tipo Telefono o Email, con cardinalidad 0..*.
 - `AsignacionProyecto` es una clase de asociación entre `Usuario` y `Proyecto`. Registra el estado (Activo/Baja) y la fecha de asignación. Un usuario solo puede tener una asignación activa por proyecto (R09). Si se elimina el proyecto, sus asignaciones se eliminan en cascada.
+- `Usuario` tiene los campos `apellido`, `email` (único) y `cuil` (único) como opcionales. El login se realiza con `email` + `clave`.
+- `Cliente` tiene `cuit` (único, opcional) y `direccion` (opcional) además de `nombre` y `estado`.
+- `Tarea` tiene un `responsable` opcional (FK `usuario_id`). Una tarea puede existir sin responsable asignado. Si el usuario se da de baja, el campo queda en null (SET NULL). La asignación no implica propiedad ni restricción de visibilidad (R03, R04).

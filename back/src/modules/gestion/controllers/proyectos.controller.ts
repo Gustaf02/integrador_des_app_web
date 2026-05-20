@@ -4,48 +4,46 @@ import {
   Get,
   NotImplementedException,
   Param,
+  ParseIntPipe,
   Post,
   Put,
+  Query,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateProyectoDto } from '../dtos/input/create-proyecto.dto';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { ProyectosService } from '../services/proyectos.service';
 import { UpdateProyectoDto } from '../dtos/input/update-proyecto.dto';
-import { ApiBearerAuth, ApiOkResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { ListProyectoDTO } from '../dtos/output/list-proyecto.dto';
 import { ProyectoDTO } from '../dtos/output/proyecto.dto';
+import { EstadosProyectosEnum } from '../enums/estados-proyectos.enum';
 
+@ApiTags('proyectos')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('proyectos')
 export class ProyectosController {
-  constructor() {}
-
-  @ApiBearerAuth()
-  @Post()
-  async crearProyecto(@Body() dto: CreateProyectoDto): Promise<{ id: number }> {
-    console.log('Datos recibidos para crear:', dto);
-    return await Promise.reject(new NotImplementedException());
-  }
-
-  @ApiBearerAuth()
-  @Put(':id')
-  async actualizarProyecto(
-    @Body() dto: UpdateProyectoDto,
-    @Param('id') id: number,
-  ): Promise<void> {
-    console.log('Actualizando ID:', id, 'con datos:', dto);
-    return await Promise.reject(new NotImplementedException());
-  }
-
-  @ApiBearerAuth()
+  constructor(private readonly proyectosService: ProyectosService) {}
   @ApiOkResponse({ type: ListProyectoDTO, isArray: true })
   @Get()
-  async obtenerProyectos(): Promise<ListProyectoDTO[]> {
-    console.log('Listando todos los proyectos');
-    return await Promise.reject(new NotImplementedException());
+  listar(@Query('estado') estado?: EstadosProyectosEnum): Promise<ListProyectoDTO[]> {
+    return this.proyectosService.listar(estado);
   }
-
-  @ApiBearerAuth()
+  @Post()
+  crear(@Body() dto: CreateProyectoDto): Promise<{ id: number }> {
+    return this.proyectosService.crear(dto);
+  }
+  @Put(':id')
+  actualizar(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateProyectoDto,
+  ): Promise<void> {
+    return this.proyectosService.actualizar(id, dto);
+  }
+  @ApiOkResponse({ type: ProyectoDTO })
   @Get(':id')
-  async obtenerProyecto(@Param('id') id: number): Promise<ProyectoDTO> {
-    console.log('Buscando proyecto con ID:', id);
-    return await Promise.reject(new NotImplementedException());
+  obtener(@Param('id', ParseIntPipe) id: number): Promise<ProyectoDTO> {
+    return this.proyectosService.obtener(id);
   }
 }

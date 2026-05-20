@@ -160,3 +160,5 @@ dev_*.md
 .env
 .env.*
 !.env.example
+
+.atl/

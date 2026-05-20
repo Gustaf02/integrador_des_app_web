@@ -32,7 +32,6 @@ export class TareasService {
       ? (estadoInput as EstadoTarea)
       : EstadoTarea.PENDIENTE;
 
-    // 2. Creamos la instancia de la tarea
     const nuevaTarea = this.tareaRepository.create({
       descripcion: String(dto.descripcion || ''),
       estado: estadoValido,
@@ -67,7 +66,7 @@ export class TareasService {
     return await queryBuilder.getMany();
   }
 
-  // RF11: Modificar los datos o el estado de la tarea (ej. para el tablero Kanban)
+  // RF11: Modificar los datos o el estado de la tarea
   async actualizar(tareaId: number, dto: UpdateTareaDto): Promise<Tarea> {
     const filtro: FindOptionsWhere<Tarea> = { id: Number(tareaId) };
     const tarea = await this.tareaRepository.findOne({
@@ -78,7 +77,6 @@ export class TareasService {
       throw new NotFoundException(`La tarea con ID ${tareaId} no existe`);
     }
 
-    // CORRECCIÓN AQUÍ: Agregamos 'as any' al dto para evitar el choque de Enums en el linter
     this.tareaRepository.merge(tarea, dto as any);
     return await this.tareaRepository.save(tarea);
   }
@@ -105,7 +103,7 @@ export class TareasService {
     return await this.tareaRepository.save(tarea);
   }
 
-  // RF32: Quitar responsable (setea usuario_id = null)
+  // RF32: Quitar responsable
   async quitarResponsable(tareaId: number): Promise<Tarea> {
     const filtro: FindOptionsWhere<Tarea> = { id: Number(tareaId) };
     const tarea = await this.tareaRepository.findOne({

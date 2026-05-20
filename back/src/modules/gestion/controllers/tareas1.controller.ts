@@ -20,7 +20,7 @@ export class TareasController {
 
   @ApiBearerAuth()
   @Post()
-  @ApiOperation({ summary: 'Crear una tarea vinculada a un proyecto (RF10)' })
+  @ApiOperation({ summary: 'Crear una tarea vinculada a un proyecto' })
   async crearTarea(
     @Param('idProyecto') idProyecto: number,
     @Body() dto: CreateTareaDto,
@@ -31,7 +31,7 @@ export class TareasController {
 
   @ApiBearerAuth()
   @Put(':id')
-  @ApiOperation({ summary: 'Modificar los datos o estado de una tarea (RF11)' })
+  @ApiOperation({ summary: 'Modificar los datos o estado de una tarea' })
   async actualizarTarea(
     @Param('idProyecto') idProyecto: number,
     @Param('id') id: number,
@@ -44,7 +44,7 @@ export class TareasController {
   @ApiBearerAuth()
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Eliminar físicamente una tarea (RF12)' })
+  @ApiOperation({ summary: 'Eliminar una tarea' })
   async eliminarTarea(
     @Param('idProyecto') idProyecto: number,
     @Param('id') id: number,

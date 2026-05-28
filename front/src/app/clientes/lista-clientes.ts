@@ -22,6 +22,7 @@ export class ListaClientesComponent implements OnInit {
   loading = signal(true);
   busqueda = signal('');
   filtroEstado = signal('TODOS');
+  errorBaja = signal('');
 
   clientesFiltrados = computed(() => {
     const q = this.busqueda().toLowerCase().trim();
@@ -68,8 +69,12 @@ export class ListaClientesComponent implements OnInit {
   }
 
   private darDeBaja(id: number) {
+    this.errorBaja.set('');
     this.clientesService.actualizar(id, { estado: 'BAJA' }).subscribe({
       next: () => this.cargarClientes(),
+      error: (err) => {
+        this.errorBaja.set(err.error?.message || 'Error al dar de baja el cliente');
+      },
     });
   }
 

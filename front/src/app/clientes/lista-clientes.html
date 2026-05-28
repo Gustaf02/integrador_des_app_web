@@ -1,5 +1,11 @@
 <p-confirmDialog />
 
+@if (errorBaja()) {
+<div class="bg-red-50 dark:bg-red-950 text-red-600 text-sm px-4 py-3 rounded-lg mb-4 border border-red-200">
+    {{ errorBaja() }}
+</div>
+}
+
 <div class="flex items-center justify-between mb-6">
   <div>
     <h2 class="text-xl font-semibold text-slate-800 dark:text-slate-100">Clientes</h2>

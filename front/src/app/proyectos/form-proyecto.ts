@@ -38,7 +38,11 @@ export class FormProyectoComponent implements OnInit {
     ];
 
     dialogCliente = signal(false);
-    formCliente = this.fb.group({ nombre: ['', Validators.required] });
+    formCliente = this.fb.group({
+        nombre: ['', Validators.required],
+        cuit: [''],
+        direccion: [''],
+    });
     guardandoCliente = signal(false);
     errorCliente = signal('');
 
@@ -66,10 +70,17 @@ export class FormProyectoComponent implements OnInit {
 
     private cargarClientes() {
         this.clientesService.listar().subscribe((data) => {
-            this.clientes.set(
-                data.filter(c => c.estado === 'ACTIVO').map(c => ({ label: c.nombre, value: c.id }))
-            );
+            const lista = data.filter(c => c.estado === 'ACTIVO').map(c => ({ label: c.nombre, value: c.id }));
+            lista.unshift({ label: '+ Crear nuevo cliente', value: -1 });
+            this.clientes.set(lista);
         });
+    }
+
+    onClienteChange(event: any) {
+        if (event.value === -1) {
+            this.form.patchValue({ idCliente: null });
+            this.abrirNuevoCliente();
+        }
     }
 
     abrirNuevoCliente() {
@@ -83,7 +94,11 @@ export class FormProyectoComponent implements OnInit {
         this.guardandoCliente.set(true);
         this.errorCliente.set('');
 
-        this.clientesService.crear({ nombre: this.formCliente.value.nombre! }).subscribe({
+        this.clientesService.crear({
+            nombre: this.formCliente.value.nombre!,
+            cuit: this.formCliente.value.cuit || undefined,
+            direccion: this.formCliente.value.direccion || undefined,
+        }).subscribe({
             next: (res) => {
                 this.dialogCliente.set(false);
                 this.guardandoCliente.set(false);

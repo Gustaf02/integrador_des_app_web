@@ -37,6 +37,8 @@
                 <td><p-tag [value]="proyecto.estado" [severity]="severidadEstado(proyecto.estado)" /></td>
                 <td class="text-right">
                     <div class="flex items-center justify-end gap-2">
+                        <button pButton icon="pi pi-list-check" severity="info" text size="small"
+                            [routerLink]="['/app/proyectos', proyecto.id]"></button>
                         <button pButton icon="pi pi-pencil" severity="secondary" text size="small"
                             [routerLink]="[proyecto.id, 'editar']"></button>
                         @if (proyecto.estado === 'ACTIVO') {

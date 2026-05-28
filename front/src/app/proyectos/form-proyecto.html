@@ -29,8 +29,13 @@
         <div class="grid grid-cols-2 gap-4">
             <div class="flex flex-col gap-1.5">
                 <label for="idCliente" class="text-sm font-medium text-slate-700 dark:text-slate-300">Cliente</label>
-                <p-select inputId="idCliente" formControlName="idCliente" [options]="clientes()" optionLabel="label"
-                    optionValue="value" placeholder="Seleccioná un cliente" styleClass="w-full" [showClear]="true" />
+                <div class="flex gap-2">
+                    <p-select inputId="idCliente" formControlName="idCliente" [options]="clientes()" optionLabel="label"
+                        optionValue="value" placeholder="Seleccioná un cliente" styleClass="w-full"
+                        [showClear]="true" />
+                    <button type="button" pButton icon="pi pi-plus" severity="info" text pTooltip="Crear cliente rápido"
+                        (click)="abrirNuevoCliente()"></button>
+                </div>
             </div>
             <div class="flex flex-col gap-1.5">
                 <label for="fechaLimite" class="text-sm font-medium text-slate-700 dark:text-slate-300">Fecha
@@ -53,5 +58,30 @@
                 [loading]="guardando()" [disabled]="form.invalid"></button>
         </div>
     </form>
+    <p-dialog [(visible)]="dialogCliente" header="Nuevo cliente" [modal]="true" [closable]="true"
+        styleClass="w-full max-w-sm">
+        @if (errorCliente()) {
+        <div class="bg-red-50 dark:bg-red-950 text-red-600 text-sm px-4 py-3 rounded-lg mb-4 border border-red-200">
+            {{ errorCliente() }}
+        </div>
+        }
+        <form [formGroup]="formCliente" class="flex flex-col gap-4">
+            <div class="flex flex-col gap-1.5">
+                <label for="nombreCliente" class="text-sm font-medium text-slate-700 dark:text-slate-300">
+                    Nombre <span class="text-red-500">*</span>
+                </label>
+                <input pInputText id="nombreCliente" formControlName="nombre" placeholder="Nombre del cliente"
+                    class="w-full" />
+                @if (formCliente.get('nombre')?.invalid && formCliente.get('nombre')?.touched) {
+                <small class="text-red-500">El nombre es requerido</small>
+                }
+            </div>
+        </form>
+        <div class="flex justify-end gap-2 pt-2" footer>
+            <button pButton label="Cancelar" severity="secondary" text (click)="dialogCliente.set(false)"></button>
+            <button pButton label="Crear cliente" [loading]="guardandoCliente()" [disabled]="formCliente.invalid"
+                (click)="guardarClienteRapido()"></button>
+        </div>
+    </p-dialog>
     }
 </div>

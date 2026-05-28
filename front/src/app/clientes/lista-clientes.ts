@@ -1,5 +1,5 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { RouterLink, ActivatedRoute } from '@angular/router';
 import { TagModule } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
@@ -16,6 +16,7 @@ import { ClientesService, Cliente } from '../core/services/clientes.service';
 export class ListaClientesComponent implements OnInit {
   private clientesService = inject(ClientesService);
   private confirmationService = inject(ConfirmationService);
+  private route = inject(ActivatedRoute);
 
   clientes = signal<Cliente[]>([]);
   loading = signal(true);
@@ -36,6 +37,11 @@ export class ListaClientesComponent implements OnInit {
   });
 
   ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      if (params['busqueda']) {
+        this.busqueda.set(params['busqueda']);
+      }
+    });
     this.cargarClientes();
   }
 

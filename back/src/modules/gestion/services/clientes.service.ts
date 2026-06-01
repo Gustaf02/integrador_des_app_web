@@ -7,6 +7,9 @@ import { CreateClienteDto } from '../dtos/input/create-cliente.dto';
 import { UpdateClienteDto } from '../dtos/input/update-cliente.dto';
 import { ListClienteDTO } from '../dtos/output/list-cliente.dto';
 import { EstadosClientesEnum } from '../enums/estados-clientes.enum';
+import { Contacto } from '../entities/contacto.entity';
+import { CreateContactoDto } from '../dtos/input/create-contacto.dto';
+import { UpdateContactoDto } from '../dtos/input/update-contacto.dto';
 
 @Injectable()
 export class ClientesService {
@@ -15,6 +18,8 @@ export class ClientesService {
     private readonly clienteRepository: Repository<Cliente>,
     @InjectRepository(Proyecto)
     private readonly proyectoRepository: Repository<Proyecto>,
+    @InjectRepository(Contacto) 
+    private readonly contactoRepository: Repository<Contacto>,
   ) {}
 
   async listar(estado?: EstadosClientesEnum): Promise<ListClienteDTO[]> {
@@ -22,6 +27,15 @@ export class ClientesService {
     return this.clienteRepository.find({ where, select: ['id', 'nombre', 'cuit', 'direccion', 'estado'] });
   }
 
+  async obtenerPorId(id: number): Promise<any> {
+    const cliente = await this.clienteRepository.findOne({
+      where: { id },
+      relations: ['contactos'], 
+    });
+    if (!cliente) throw new NotFoundException('Cliente no encontrado');
+    return cliente;
+  }
+  
   async crear(dto: CreateClienteDto): Promise<{ id: number }> {
     const existe = await this.clienteRepository.findOneBy({ nombre: dto.nombre });
     if (existe) throw new ConflictException('El nombre de cliente ya existe');
@@ -47,5 +61,28 @@ export class ClientesService {
     }
     
     await this.clienteRepository.update(id, dto);
+  } 
+
+  async agregarContacto(clienteId: number, dto: CreateContactoDto) {
+    const cliente = await this.clienteRepository.findOneBy({ id: clienteId });
+    if (!cliente) throw new NotFoundException('Cliente no encontrado');
+    
+    const contacto = this.contactoRepository.create({ ...dto, cliente });
+    const guardado = await this.contactoRepository.save(contacto);
+    return { id: guardado.id };
+  }
+
+  async modificarContacto(contactoId: number, dto: UpdateContactoDto) {
+    const contacto = await this.contactoRepository.findOneBy({ id: contactoId });
+    if (!contacto) throw new NotFoundException('Contacto no encontrado');
+    
+    Object.assign(contacto, dto);
+    await this.contactoRepository.save(contacto);
+  }
+
+  async eliminarContacto(contactoId: number) {
+    const result = await this.contactoRepository.delete(contactoId);
+    if (result.affected === 0) throw new NotFoundException('Contacto no encontrado');
   }
 }
+

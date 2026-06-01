@@ -16,6 +16,7 @@ import { StatsService } from './services/stats.service';
 import { StatsController } from './controllers/stats.controller';
 import { TareasController } from './controllers/tareas1.controller';
 import { TareasService } from './services/tareas.service';
+import { Contacto } from './entities/contacto.entity';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { TareasService } from './services/tareas.service';
       Tarea,
       AsignacionProyecto,
       Usuario,
+      Contacto,
     ]),
     AuthModule,
   ],

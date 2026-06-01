@@ -17,6 +17,9 @@ export class Contacto {
   @Column()
   valor!: string;
 
+  @Column({ nullable: true })
+  observacion!: string;
+
   @ManyToOne(() => Cliente, (cliente) => cliente.contactos, {
     onDelete: 'CASCADE',
   })

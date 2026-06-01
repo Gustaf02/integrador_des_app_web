@@ -241,7 +241,7 @@ export class DetalleProyectoComponent implements OnInit {
         const proyecto = this.proyecto();
         if (!proyecto) return;
         const encabezado = ['Descripción', 'Estado', 'Responsable', 'Fecha creación'];
-        const filas = proyecto.tareas.map(t => [
+        const filas = this.tareasFiltradas().map(t => [
             t.descripcion,
             t.estado,
             t.responsable

@@ -7,7 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { Usuario } from '../../auth/entities/usuario.entity';
+import { Usuario, RolUsuario } from '../../auth/entities/usuario.entity';
 import { CreateUsuarioDto } from '../dtos/input/create-usuario.dto';
 import { UpdateUsuarioDto } from '../dtos/input/update-usuario.dto';
 import { ListUsuarioDto } from '../dtos/output/list-usuario.dto';
@@ -51,6 +51,13 @@ export class UsuariosService {
 
     if (dto.estado === 'BAJA' && id === idSolicitante) {
       throw new ForbiddenException('No podés darte de baja a vos mismo');
+    }
+
+    if (dto.estado === 'BAJA' && usuario.rol === RolUsuario.ADMIN) {
+      const solicitante = await this.usuarioRepository.findOneBy({ id: idSolicitante });
+      if (solicitante?.rol === RolUsuario.ADMIN) {
+        throw new ForbiddenException('Un administrador no puede dar de baja a otro administrador');
+      }
     }
 
     if (dto.clave) {

@@ -127,6 +127,8 @@ Cada push a `main` deploya automáticamente.
 develop / [rama-compañero] → develop → main
 ```
 ## Comandos para VSC: 
+```bash
 cd back
 npm run deploy
 pm2 list
+```
